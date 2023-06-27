@@ -1,0 +1,24 @@
+{
+  "name": "sql-database-challenge-12",
+  "version": "1.0.0",
+  "description": "this is a repository for challenge 12 sql database application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shyguyMatt/sql-database-challenge-12.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shyguyMatt/sql-database-challenge-12/issues"
+  },
+  "homepage": "https://github.com/shyguyMatt/sql-database-challenge-12#readme",
+  "dependencies": {
+    "inquirer": "^8.2.5",
+    "mysql2": "^3.4.2"
+  }
+}
