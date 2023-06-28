@@ -5,7 +5,7 @@ const mysql = require('mysql2');
     {
         host: 'localhost',
         user: 'root',
-        password: '',
+        password: 'slv2*Hst',
         database: 'employees_db'
     }
  );
@@ -64,7 +64,6 @@ function Menu() {
             case 'Quit':
                 process.exit();
         }
-        Menu();
     })
 }
 
@@ -75,15 +74,75 @@ function ViewAllEmployees() {
 }
 
 function AddEmployee() {
+    var roles = [];
+    var managers = [];
+    db.query('SELECT id, title FROM roles', function (err, results) {
+        for(x in results) {
+            roles.push(`${results[x].id}`)
+        }
+    })
+    db.query('SELECT first_name, last_name, manager_id FROM employees WHERE manager_id = null', function (err, results) {
+        for(x in results) {
+            managers.push(`${results[x].manager_id}`)
+        }
+    })
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'first_name',
+                message: 'Enter the first name'
+            },
+            {
+                type: 'input',
+                name: 'last_name',
+                message: 'Enter the last name'
+            },
+            {
+                type: 'list',
+                choices: roles,
+                name: 'role_id',
+                message: 'Select the title'
+            },
+            {
+                type: 'list',
+                choices: managers,
+                name: 'manager_id',
+                message: 'Select the manager if any'
+            }
+        ])
+        .then((response) => {
+            db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id)
+                      VALUES ('${response.first_name}', '${response.last_name}', '${response.role_id}', '${response.manager_id}')`)
+        })
 
 }
 
 function UpdateEmployeeRole() {
-
+    var employees = [];
+    db.query('SELECT first_name, last_name, id FROM employees', function (err, results) {
+        for(x in results) {
+            employees.push(`${results[x].first_name} ${results[x].last_name}, ${results[x].id}`)
+        }
+    })
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                choices: employees,
+                name: 'employee',
+                message: 'Select an employee to update'
+            }
+        ])
+        .then((response) => {
+            
+        })
 }
 
 function ViewAllRoles() {
-
+    db.query('SELECT * FROM roles', function (err, results) {
+        console.log(results);
+    })
 }
 
 function AddRole() {
@@ -91,7 +150,9 @@ function AddRole() {
 }
 
 function ViewAllDepartments() {
-
+    db.query('SELECT * FROM departments', function (err, results) {
+        console.log(results);
+    })
 }
 
 function AddDepartment() {
