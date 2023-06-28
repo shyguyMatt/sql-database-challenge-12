@@ -5,7 +5,7 @@ const mysql = require('mysql2');
     {
         host: 'localhost',
         user: 'root',
-        password: 'slv2*Hst',
+        password: '',
         database: 'employees_db'
     }
  );
@@ -135,7 +135,7 @@ function UpdateEmployeeRole() {
             }
         ])
         .then((response) => {
-            
+
         })
 }
 
@@ -146,7 +146,39 @@ function ViewAllRoles() {
 }
 
 function AddRole() {
+    var departments = []
+    db.query('SELECT id, dpt_name FROM departments', function (err, results) {
+        for(x in results) {
+            departments.push(`${results[x].dpt_name}, ${results[x].id}`)
+        }
+    })
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'title',
+                message: 'Enter the title of the new role'
+            },
+            {
+                type: 'input',
+                name: 'id',
+                message: 'Enter the id of the new role'
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: 'Enter the salary for the new role'
+            },
+            {
+                type: 'list',
+                choice: departments,
+                name: 'department',
+                message: 'Select the department for the role'
+            }
+        ])
+        .then((response) => {
 
+        })
 }
 
 function ViewAllDepartments() {
@@ -156,5 +188,20 @@ function ViewAllDepartments() {
 }
 
 function AddDepartment() {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'dpt_name',
+                message: 'Enter the name of the new department'
+            },
+            {
+                type: 'input',
+                name: 'id',
+                message: 'Enter the id of the new department'
+            }
+        ])
+        .then((response) => {
 
+        })
 }
