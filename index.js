@@ -63,6 +63,9 @@ function Menu() {
 
             case 'Quit':
                 process.exit();
+            
+            default: 
+                break;
         }
     })
 }
@@ -71,6 +74,7 @@ function ViewAllEmployees() {
     db.query('SELECT * FROM employees', function (err, results) {
         console.log(results);
     })
+    Menu();
 }
 
 function AddEmployee() {
@@ -112,8 +116,9 @@ function AddEmployee() {
             }
         ])
         .then((response) => {
-            db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id)
-                      VALUES ('${response.first_name}', '${response.last_name}', '${response.role_id}', '${response.manager_id}')`)
+            db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`,
+            [response.first_name, response.last_name, response.role_id, response.manager_id])            
+            Menu();
         })
 
 }
@@ -135,7 +140,7 @@ function UpdateEmployeeRole() {
             }
         ])
         .then((response) => {
-
+            Menu();
         })
 }
 
@@ -143,6 +148,7 @@ function ViewAllRoles() {
     db.query('SELECT * FROM roles', function (err, results) {
         console.log(results);
     })
+    Menu();
 }
 
 function AddRole() {
@@ -177,7 +183,9 @@ function AddRole() {
             }
         ])
         .then((response) => {
-
+            db.query('INSERT INTO roles (id, title, salary, department_id) VALUES (?,?,?,?)',
+            [response.id, response.title, response.salary, response.department])
+            Menu();
         })
 }
 
@@ -185,6 +193,7 @@ function ViewAllDepartments() {
     db.query('SELECT * FROM departments', function (err, results) {
         console.log(results);
     })
+    Menu();
 }
 
 function AddDepartment() {
@@ -202,6 +211,8 @@ function AddDepartment() {
             }
         ])
         .then((response) => {
-
+            db.query('INSERT INTO departments (id, dpt_name) VALUES (?, ?);',
+            [response.id, response.dpt_name])
+            Menu();
         })
 }
