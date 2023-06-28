@@ -12,6 +12,7 @@ const mysql = require('mysql2');
 
 Menu();
 
+// main inquirer function menu
 function Menu() {
     inquirer
     .prompt([
@@ -32,6 +33,7 @@ function Menu() {
         }
     ])
     .then((response) => {
+        // switch case for all possible choices
         switch(response.choice1) {
             case 'View All Employees':
                 ViewAllEmployees();
@@ -70,6 +72,7 @@ function Menu() {
     })
 }
 
+// retrieves and logs all employees
 function ViewAllEmployees() {
     db.query('SELECT * FROM employees', function (err, results) {
         console.log(results);
@@ -77,6 +80,8 @@ function ViewAllEmployees() {
     Menu();
 }
 
+// adds a new employee, takes input for name role and manager id
+// id is auto incrmented
 function AddEmployee() {
     var roles = [];
     var managers = [];
@@ -85,7 +90,7 @@ function AddEmployee() {
             roles.push(`${results[x].id}`)
         }
     })
-    db.query('SELECT first_name, last_name, manager_id FROM employees WHERE manager_id = null', function (err, results) {
+    db.query('SELECT first_name, last_name, manager_id FROM employees', function (err, results) {
         for(x in results) {
             managers.push(`${results[x].manager_id}`)
         }
@@ -109,13 +114,15 @@ function AddEmployee() {
                 message: 'Select the title'
             },
             {
-                type: 'list',
-                choices: managers,
+                type: 'input',
                 name: 'manager_id',
-                message: 'Select the manager if any'
+                message: 'Enter the manager id if any'
             }
         ])
         .then((response) => {
+            var manager_id = '';
+            if(response.manager_id < 0) manager_id = response.manager_id;
+            else manager_id = 0;
             db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`,
             [response.first_name, response.last_name, response.role_id, response.manager_id])            
             Menu();
@@ -123,13 +130,20 @@ function AddEmployee() {
 
 }
 
+// updates employee roles takes input for employee and new role
 function UpdateEmployeeRole() {
     var employees = [];
+    var roles = [];
     db.query('SELECT first_name, last_name, id FROM employees', function (err, results) {
         for(x in results) {
-            employees.push(`${results[x].first_name} ${results[x].last_name}, ${results[x].id}`)
+            employees.push(`${results[x].id}`)
         }
-    })
+    });
+    db.query('SELECT id, title FROM roles', function (err, results) {
+        for(x in results) {
+            roles.push(`${results[x].id}`);
+        }
+    });
     inquirer
         .prompt([
             {
@@ -137,13 +151,23 @@ function UpdateEmployeeRole() {
                 choices: employees,
                 name: 'employee',
                 message: 'Select an employee to update'
+            },
+            {
+                type: 'list',
+                choices: roles,
+                name: 'role',
+                message: 'Select a new role for the employee'
             }
         ])
         .then((response) => {
+            db.query('UPDATE employees SET role_id = ? WHERE id = ?',
+            [response.employee, response.role]);
             Menu();
         })
 }
 
+
+// displays all roles
 function ViewAllRoles() {
     db.query('SELECT * FROM roles', function (err, results) {
         console.log(results);
@@ -151,11 +175,13 @@ function ViewAllRoles() {
     Menu();
 }
 
+
+// adds a new role takes input for role id, salary, and department
 function AddRole() {
     var departments = []
     db.query('SELECT id, dpt_name FROM departments', function (err, results) {
         for(x in results) {
-            departments.push(`${results[x].dpt_name}, ${results[x].id}`)
+            departments.push(`${results[x].id}`)
         }
     })
     inquirer
@@ -189,6 +215,8 @@ function AddRole() {
         })
 }
 
+
+// displays all departments
 function ViewAllDepartments() {
     db.query('SELECT * FROM departments', function (err, results) {
         console.log(results);
@@ -196,6 +224,8 @@ function ViewAllDepartments() {
     Menu();
 }
 
+
+// adds a new department takes input for department id and name
 function AddDepartment() {
     inquirer
         .prompt([
