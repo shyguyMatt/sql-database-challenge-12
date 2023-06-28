@@ -1,4 +1,14 @@
 const inquirer = require('inquirer');
+const mysql = require('mysql2');
+
+ const db = mysql.createConnection(
+    {
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'employees_db'
+    }
+ );
 
 Menu();
 
@@ -22,51 +32,46 @@ function Menu() {
         }
     ])
     .then((response) => {
-        console.log(response.choice1)
         switch(response.choice1) {
             case 'View All Employees':
                 ViewAllEmployees();
-                Menu();
                 break;
 
             case 'Add Employee':
                 AddEmployee();
-                Menu();
                 break;
 
             case 'Update Employee Role':
                 UpdateEmployeeRole();
-                Menu();
                 break;
 
             case 'View All Roles':
                 ViewAllRoles();
-                Menu();
                 break;
 
             case 'Add Role':
                 AddRole();
-                Menu();
                 break;
 
             case 'View All Departments':
                 ViewAllDepartments();
-                Menu();
                 break;
 
             case 'Add Department':
                 AddDepartment();
-                Menu();
                 break;
 
             case 'Quit':
-                repeat = false;
+                process.exit();
         }
+        Menu();
     })
 }
 
 function ViewAllEmployees() {
-
+    db.query('SELECT * FROM employees', function (err, results) {
+        console.log(results);
+    })
 }
 
 function AddEmployee() {
